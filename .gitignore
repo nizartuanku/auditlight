@@ -1,0 +1,16 @@
+# Build output. The leading slash targets the compiled binary at the repo root.
+/auditlight
+# ...but a bare `/auditlight` would also silently ignore a directory of the same
+# name if one is ever added at the root, which has bitten this line of products
+# before: git quietly drops every NEW file inside it while tracked files keep
+# working, so the repo only breaks for whoever clones it next. Re-include it.
+!/auditlight/
+
+# Local job data and scratch
+/.auditlight/
+*.tar.gz
+SHA256SUMS
+
+# Seller kit — must never reach a public repository
+issuer.key
+RELEASE.md
