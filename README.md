@@ -121,7 +121,7 @@ is recorded rather than swallowed.
 
 This is change tracking, not monitoring. Nothing is watched between runs; a problem that
 appears and disappears in the gap is never seen. For continuous checks see the rest of the
-[Hexward line](https://whop.com/hexward-suite).
+[Hexward line](https://whop.com/nizar-tuanku/hexward-suite?utm_source=github).
 
 ---
 
@@ -257,7 +257,7 @@ branding, and control mapping to ISO 27001:2022, CIS v8, NIST CSF 2.0 and UU PDP
 | Assessment timeline | — | yes | yes |
 | Report branding | — | logo and name | full white-label |
 
-→ **[Get AuditLight Pro or Team on Whop](https://whop.com/auditlight)**
+→ **[Get AuditLight Pro or Team on Whop](https://whop.com/nizar-tuanku/auditlight?utm_source=github)**
 
 ## Configuration
 
@@ -324,7 +324,7 @@ Apache License 2.0 — see [LICENSE](LICENSE).
 ---
 
 Part of the **Hexward** line of self-hosted security tools ·
-[Whop](https://whop.com/hexward-suite) ·
+[Whop](https://whop.com/nizar-tuanku/hexward-suite?utm_source=github) ·
 [Instagram](https://instagram.com/nizartuanku) ·
 [YouTube](https://youtube.com/@nizartuanku) ·
 [TikTok](https://tiktok.com/@nizartuanku)
