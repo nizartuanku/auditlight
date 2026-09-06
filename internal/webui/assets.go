@@ -147,7 +147,8 @@ details summary{cursor:pointer;color:var(--muted);font-size:13px;padding:4px 0}
     </svg>
     <div><div class="bname">AuditLight</div><div class="btag" id="tagline">Loading…</div></div>
   </div>
-  <div class="lic"><span class="tier" id="tier">—</span> <span id="licnote"></span></div>
+  <div class="lic"><span class="tier" id="tier">—</span> <span id="licnote"></span>
+    <span class="muted"> · Free edition. Pro and Team licences: whop.com/nizar-tuanku/auditlight</span></div>
 </header>
 
 <div class="rail">
@@ -264,6 +265,8 @@ details summary{cursor:pointer;color:var(--muted);font-size:13px;padding:4px 0}
 </details>
 
 </div>
+<footer class="muted" style="padding:18px 0;text-align:center;font-size:13px">Self-hosted. Nothing leaves this machine. &middot; The dashboard is deliberately link-free so it works air-gapped &mdash; Pro and Team licences are at whop.com/nizar-tuanku/auditlight</footer>
+
 <script>
 "use strict";
 const $ = s => document.querySelector(s);
