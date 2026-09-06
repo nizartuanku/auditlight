@@ -348,7 +348,7 @@ func serveHTML(w http.ResponseWriter, b []byte) {
 func (s *Server) handleExport(w http.ResponseWriter, r *http.Request) {
 	if !s.runner.Licence().Caps.Export {
 		writeJSON(w, http.StatusPaymentRequired, apiError{
-			Error:   "Machine-readable export is available on the Pro and Team tiers.",
+			Error:   "Machine-readable export is available on the Pro and Team tiers — https://whop.com/nizar-tuanku/auditlight?utm_source=app",
 			Upgrade: true,
 		})
 		return
