@@ -257,6 +257,8 @@ branding, and control mapping to ISO 27001:2022, CIS v8, NIST CSF 2.0 and UU PDP
 | Assessment timeline | — | yes | yes |
 | Report branding | — | logo and name | full white-label |
 
+**Whop sells paid licences only.** Free: github.com/nizartuanku/auditlight — this repository is the free edition, Apache-2.0, no time limit; nothing on Whop is free, so try it here first.
+
 → **[Get AuditLight Pro or Team on Whop](https://whop.com/nizar-tuanku/auditlight?utm_source=github)**
 
 ## Configuration
