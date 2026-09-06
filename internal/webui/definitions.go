@@ -179,7 +179,7 @@ func (s *Server) handleDeltaJSON(w http.ResponseWriter, r *http.Request) {
 	}
 	if !s.runner.Licence().Caps.Reassessment {
 		writeJSON(w, http.StatusPaymentRequired, apiError{
-			Error:   "Change tracking is available on the Pro and Team tiers.",
+			Error:   "Change tracking is available on the Pro and Team tiers — https://whop.com/nizar-tuanku/auditlight?utm_source=app",
 			Upgrade: true,
 		})
 		return
@@ -200,7 +200,7 @@ func (s *Server) handleDeltaReport(w http.ResponseWriter, r *http.Request) {
 	caps := s.runner.Licence().Caps
 	if !caps.Reassessment {
 		writeJSON(w, http.StatusPaymentRequired, apiError{
-			Error:   "The change report is available on the Pro and Team tiers.",
+			Error:   "The change report is available on the Pro and Team tiers — https://whop.com/nizar-tuanku/auditlight?utm_source=app",
 			Upgrade: true,
 		})
 		return
