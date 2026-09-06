@@ -16,9 +16,9 @@ different package names.
 ## From a release
 
 ```sh
+sha256sum -c SHA256SUMS
 tar xzf auditlight-free-0.3.0-linux-amd64.tar.gz
 cd auditlight-0.3.0
-sha256sum -c SHA256SUMS
 ./auditlight
 ```
 
