@@ -46,8 +46,9 @@ something you clicked once.
 ## Install
 
 ```sh
-tar xzf auditlight-free-0.3.0-linux-amd64.tar.gz
 sha256sum -c SHA256SUMS
+tar xzf auditlight-free-0.3.0-linux-amd64.tar.gz
+cd auditlight-0.3.0
 ./auditlight
 ```
 
