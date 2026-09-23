@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.3.1 — 2026-09-23
 
 - **`scripts/first-run.sh` — one command from a clean machine to a working dashboard.** It resolves the latest release at run time rather than pinning a tag, verifies the download against `SHA256SUMS` with no `--ignore-missing`, extracts, `cd`s into the extracted directory, starts the binary and polls the dashboard until it answers. If the port is already taken it says so instead of letting the binary exit a second later and read like a broken product (`FIRST_RUN_PORT` overrides). Step 1 uses the unauthenticated GitHub API, which allows 60 calls per hour per address; when that budget is gone the script names the rate limit and when it resets, instead of reporting "cannot reach".
 - **The documented install commands were run, and one of them was wrong.** `docs/INSTALL.md` verified the checksum *after* `cd`-ing into the extracted directory — but `SHA256SUMS` sits beside the archive, not inside it, so the command could not find the file it was checking. The order is now the one that was actually tested end to end: `sha256sum -c` → `tar xzf` → `cd` → run. The README install block follows the same order.
