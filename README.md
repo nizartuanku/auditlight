@@ -205,6 +205,54 @@ bring-your-own.
 
 ---
 
+## AI Assist (optional)
+
+AuditLight can explain a finding in plain language with a small language model that runs on
+your own hardware. It is off by default. Turn it on by starting a
+[hexward-ai](https://github.com/nizartuanku/hexward-ai) sidecar and pointing AuditLight at it:
+
+```sh
+auditlight -ai-assist-url http://127.0.0.1:8435
+```
+
+Each finding on the results page then gets an **✨ Explain** button. The model writes what the
+finding means and what to verify before you act. It also gets a fixed disclaimer.
+
+On a saved assessment, findings that were present in the previous run and are absent from this
+one are listed under **No longer detected since the previous run**, each with a
+**✨ Why did this disappear?** button. AuditLight decides the reason itself, from its own
+process record — the target was skipped, the check that found it did not complete, or the check
+ran and no longer reported it — and shows that classification above the narrative. The model
+only puts it into words. AuditLight never verifies a fix, so it never says "fixed".
+
+- **The engine still decides.** The model receives one finding after AuditLight has produced
+  it. It cannot add, remove, re-score or close a finding, and it cannot reclassify a change.
+  If the sidecar is off, slow or broken, the button shows a short note and nothing else changes.
+- **What leaves the process.** One finding: its category, checks, title, target, severity,
+  status, remediation, the first paragraph of its description and a sanitised copy of its
+  evidence. Matched credentials from the secrets check and full response-header dumps are
+  never sent at all; evidence whose label looks like a secret (password, token, secret,
+  private, credential, cookie, session, signature and similar) is dropped. Nothing goes to
+  the internet. The sidecar runs where you run it.
+- **Editions.** The free edition works with a sidecar on the same host. That is the `lab`
+  profile, SmolLM3-3B. Pro and Team can also use one dedicated AI host for several products,
+  or your own OpenAI-compatible endpoint, through `-ai-assist-key-file`. The recommended
+  profile there is `smb` (Phi-4-mini-instruct). Enterprise uses Qwen3 or your own endpoint.
+  "Why did this disappear?" follows the change report: Pro and Team.
+- **Language.** `-ai-assist-lang id` writes in Bahasa Indonesia. On the free SmolLM3 profile
+  Indonesian is experimental. English is recommended there.
+- **Honest limit.** Small local models sometimes add general background that is not in the
+  evidence. For example, they may name a well-known attack, and that background can be wrong.
+  Treat the explanation as a starting point. The finding, its evidence and its fix text remain
+  the record, which is why every explanation carries the "verify against raw findings" line.
+- **Speed.** On a CPU-only machine an explanation takes about 15–50 seconds, depending on the
+  model. Measurements are in hexward-ai's `docs/TIERS.md`.
+
+Environment equivalents: `AUDITLIGHT_AI_ASSIST_URL`, `AUDITLIGHT_AI_ASSIST_KEY_FILE`,
+`AUDITLIGHT_AI_ASSIST_LANG`, `AUDITLIGHT_AI_ASSIST_NO_THINKING=1`.
+
+---
+
 ## Honest limits
 
 Read these before you rely on a report.
@@ -281,6 +329,10 @@ branding, and control mapping to ISO 27001:2022, CIS v8, NIST CSF 2.0 and UU PDP
   -smtp-from string     From address for notifications
   -smtp-starttls        upgrade the SMTP connection with STARTTLS (default true)
   -version              print version and exit
+  -ai-assist-url string       optional hexward-ai sidecar URL (off when empty)
+  -ai-assist-key-file string  API key file for a dedicated AI host or your own endpoint (Pro/Team)
+  -ai-assist-lang string      language of AI explanations: en (default) or id
+  -ai-assist-no-thinking      disable reasoning mode (Qwen3 enterprise profiles)
 ```
 
 ## HTTP API
@@ -303,6 +355,9 @@ branding, and control mapping to ISO 27001:2022, CIS v8, NIST CSF 2.0 and UU PDP
 | `POST` | `/api/definitions/{id}/run` | Run one now |
 | `POST` | `/api/definitions/{id}/reauthorise` | Restart the authorisation clock |
 | `DELETE` | `/api/definitions/{id}` | Remove a saved assessment |
+| `GET` | `/api/ai` | Whether AI Assist is on, and why not |
+| `POST` | `/api/jobs/{id}/findings/explain` | AI explanation of one finding (`{"finding_id"}`) |
+| `POST` | `/api/jobs/{id}/delta/explain` | Why a finding is absent since the previous run (paid) |
 
 Tier limits answer `402`. Authorisation failures answer `403`. Both carry a readable message.
 

@@ -1,5 +1,25 @@
 # Changelog
 
+## Unreleased
+
+- **AI Assist (optional): an ✨ Explain button on every finding, and ✨ Why did this disappear?
+  on findings gone since the previous run.** When AuditLight is started with `-ai-assist-url`,
+  a local [hexward-ai](https://github.com/nizartuanku/hexward-ai) sidecar explains a finding in
+  plain language and lists what to verify. The engine remains the only source of findings,
+  severity and change classification: the reason a finding disappeared (target skipped, check
+  did not complete, no longer detected) is read from AuditLight's own process record and shown
+  next to the narrative; the model never decides it and "fixed" is never claimed. Only one
+  sanitised finding is sent (secret-like evidence dropped; matched credentials and header
+  dumps never forwarded). Any AI failure shows a quiet note and changes nothing. Free edition:
+  a sidecar on the same host. Pro/Team: also a dedicated AI host or your own endpoint
+  (`-ai-assist-key-file`). English or Bahasa Indonesia (`-ai-assist-lang`). New endpoints
+  `GET /api/ai`, `POST /api/jobs/{id}/findings/explain` and `POST /api/jobs/{id}/delta/explain`,
+  covered by tests for: AI off, bad config, sanitising, tier gating, engine-owned
+  classification, sidecar down, and bad requests.
+- The results page now lists findings that were present in the previous run of a saved
+  assessment and are absent from this one, with the same "gone is not fixed" wording as the
+  change report.
+
 ## 0.3.1 — 2026-09-23
 
 - **`scripts/first-run.sh` — one command from a clean machine to a working dashboard.** It resolves the latest release at run time rather than pinning a tag, verifies the download against `SHA256SUMS` with no `--ignore-missing`, extracts, `cd`s into the extracted directory, starts the binary and polls the dashboard until it answers. If the port is already taken it says so instead of letting the binary exit a second later and read like a broken product (`FIRST_RUN_PORT` overrides). Step 1 uses the unauthenticated GitHub API, which allows 60 calls per hour per address; when that budget is gone the script names the rate limit and when it resets, instead of reporting "cannot reach".

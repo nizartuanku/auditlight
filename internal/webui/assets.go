@@ -134,6 +134,19 @@ details summary{cursor:pointer;color:var(--muted);font-size:13px;padding:4px 0}
 .muted{color:var(--muted)}
 .small{font-size:12.5px}
 @media (max-width:720px){.row{grid-template-columns:1fr}.lic{text-align:left}}
+/* AI Assist: styled apart from the engine's own record so it always reads as
+   narration, never as a new fact from the assessment. */
+.find .acts{display:flex;gap:7px;margin-top:10px;flex-wrap:wrap}
+.mini.aibtn{color:var(--accent)}
+.mini.aibtn:disabled{opacity:.55;cursor:wait}
+.ai-explain{margin-top:10px;padding:11px 14px;border-radius:0 9px 9px 0;font-size:13.5px;
+  background:var(--accent-soft);border:1px solid var(--line);border-left:3px solid var(--accent)}
+.ai-explain.quiet{background:var(--bg);border-left-color:var(--line);color:var(--muted);font-style:italic}
+.ai-explain ul{margin:4px 0 0 18px;padding:0}
+.ai-verify{margin-top:8px}
+.ai-engine{font-size:12.5px;color:var(--muted);margin-bottom:8px}
+.ai-engine b{font-family:var(--mono);color:var(--ink);font-weight:640}
+.ai-disclaimer{margin-top:8px;font-size:11.5px;color:var(--muted)}
 /*EXPLORER-CSS*/
 </style></head><body>
 <div class="app">
@@ -249,6 +262,13 @@ details summary{cursor:pointer;color:var(--muted);font-size:13px;padding:4px 0}
   <div id="findings"></div>
 </section>
 
+<section class="card hidden" id="pdelta">
+  <h2>No longer detected since the previous run</h2>
+  <p class="sub">Present in the previous run of this saved assessment, absent from this one. Gone from the
+  results is not the same as fixed — the process report says whether the check that found it even ran.</p>
+  <div id="deltalist"></div>
+</section>
+
 <!--EXPLORER-->
 
 <section class="card hidden" id="recur">
@@ -289,7 +309,7 @@ function step(n){
   });
   // The explorer belongs to a finished run, so it goes away the moment the
   // operator steps back to set up a new one.
-  if(n!==4) $("#pexp").classList.add("hidden");
+  if(n!==4){ $("#pexp").classList.add("hidden"); $("#pdelta").classList.add("hidden"); }
   window.scrollTo({top:0,behavior:"smooth"});
 }
 
@@ -419,6 +439,7 @@ async function finish(j){
   const box=$("#findings"); box.innerHTML="";
   data.findings.slice(0,40).forEach(f=>{
     const d=el("div","find");
+    d.dataset.fid=f.id; d.dataset.job=state.job;
     const h=el("div","h");
     h.appendChild(el("div","ti",f.title));
     h.appendChild(el("span","sev "+f.severity,f.severity));
@@ -432,6 +453,7 @@ async function finish(j){
     (f.cve||[]).forEach(c=>m.appendChild(el("span","tag",c)));
     d.appendChild(m);
     box.appendChild(d);
+    aiAttach(d,"finding",state.job,f.id);
   });
   if(data.findings.length>40) box.appendChild(el("p","small muted","Showing the 40 highest-ranked here. The full list is in the report."));
 
@@ -443,6 +465,7 @@ async function finish(j){
   }
   loadDefs();
   step(4);
+  loadDelta(j);
 
   // The explorer is drawn from the same findings the list shows, so the two
   // views can never disagree about what this licence exposes.
@@ -541,6 +564,108 @@ async function loadDefs(){
   });
 }
 $("#openProcess").onclick=()=>window.open("/api/jobs/"+state.job+"/report/process","_blank");
+
+// Findings that were in the previous run of a saved assessment and are gone
+// from this one. The comparison is the delta engine's; the list only repeats
+// it, so it can never disagree with the change report.
+async function loadDelta(j){
+  const box=$("#deltalist"); box.innerHTML="";
+  $("#pdelta").classList.add("hidden");
+  if(!(state.status && state.status.reassessment && j.definition_id)) return;
+  const r=await api("/api/jobs/"+state.job+"/delta");
+  if(!r.ok || !r.body || !r.body.has_baseline) return;
+  const gone=(r.body.entries||[]).filter(e=>e.change==="resolved" && e.finding);
+  if(!gone.length) return;
+  gone.forEach(e=>{
+    const f=e.finding;
+    const d=el("div","find");
+    d.dataset.fid=f.id; d.dataset.job=state.job;
+    const h=el("div","h");
+    h.appendChild(el("div","ti",f.title));
+    h.appendChild(el("span","sev "+f.severity,"was "+f.severity));
+    d.appendChild(h);
+    d.appendChild(el("div","small muted",(f.description||"").split("\n\n")[0]));
+    const m=el("div","m");
+    m.appendChild(el("span","tag",f.target+(f.port?":"+f.port:"")));
+    m.appendChild(el("span","tag",f.category));
+    m.appendChild(el("span","tag","last seen in "+r.body.baseline_job_id));
+    d.appendChild(m);
+    box.appendChild(d);
+    aiAttach(d,"delta",state.job,f.id);
+  });
+  $("#pdelta").classList.remove("hidden");
+}
+
+/* ---- AI Assist -------------------------------------------------------- */
+// AuditLight's engine stays the only source of findings, severity and change
+// classification. This block only asks the optional hexward-ai sidecar to
+// narrate one finding already on screen. When AI Assist is off the buttons
+// are never drawn; when it fails a quiet note appears and nothing else
+// changes. Answers are cached per job and finding so a re-render keeps them.
+let aiEnabled=false;
+const aiState={};
+api("/api/ai").then(r=>{ aiEnabled=!!(r.ok && r.body && r.body.enabled); if(aiEnabled) aiDecorateAll(); }).catch(()=>{});
+const aiKey=(kind,job,id)=>kind+"|"+job+"|"+id;
+
+function aiAttach(card,kind,job,id){
+  if(!aiEnabled || card.querySelector(".aibtn")) return;
+  card.dataset.aiKey=aiKey(kind,job,id);
+  const acts=el("div","acts");
+  const b=el("button","mini aibtn"); b.type="button";
+  b.onclick=()=>aiExplain(kind,job,id);
+  acts.appendChild(b); card.appendChild(acts);
+  card.appendChild(el("div","ai-explain hidden"));
+  aiRender(card,kind,job,id);
+}
+function aiDecorateAll(){
+  document.querySelectorAll("#findings .find[data-fid]").forEach(c=>aiAttach(c,"finding",c.dataset.job,c.dataset.fid));
+  document.querySelectorAll("#deltalist .find[data-fid]").forEach(c=>aiAttach(c,"delta",c.dataset.job,c.dataset.fid));
+}
+function aiRender(card,kind,job,id){
+  const st=aiState[aiKey(kind,job,id)];
+  const b=card.querySelector(".aibtn"), panel=card.querySelector(".ai-explain");
+  if(!b || !panel) return;
+  const busy=!!(st && st.status==="loading");
+  b.textContent = busy ? "Explaining…" : (kind==="delta" ? "✨ Why did this disappear?" : "✨ Explain");
+  b.disabled=busy;
+  panel.innerHTML=""; panel.className="ai-explain";
+  if(!st){ panel.classList.add("hidden"); return; }
+  if(busy){ panel.classList.add("quiet"); panel.textContent="Asking AI Assist. It runs on your own hardware and can take up to a minute."; return; }
+  if(st.status!=="done"){ panel.classList.add("quiet"); panel.textContent=(st.message||"AI Assist is not reachable right now.")+" The finding above is unaffected."; return; }
+  if(st.engine){
+    const e=el("div","ai-engine","AuditLight classified this as ");
+    e.appendChild(el("b","",st.engine.status.replace(/_/g," ")));
+    e.appendChild(document.createTextNode(st.engine.detail ? " — "+st.engine.detail : "."));
+    panel.appendChild(e);
+  }
+  panel.appendChild(el("div","",st.explanation));
+  if((st.whatToVerify||[]).length){
+    const v=el("div","ai-verify"); v.appendChild(el("b","","What to verify:"));
+    const ul=el("ul"); st.whatToVerify.forEach(x=>ul.appendChild(el("li","",x))); v.appendChild(ul);
+    panel.appendChild(v);
+  }
+  panel.appendChild(el("div","ai-disclaimer",st.disclaimer));
+}
+function aiRenderAll(key){
+  document.querySelectorAll(".find[data-ai-key]").forEach(c=>{
+    if(c.dataset.aiKey!==key) return;
+    const [kind,job,id]=key.split("|"); aiRender(c,kind,job,id);
+  });
+}
+async function aiExplain(kind,job,id){
+  const key=aiKey(kind,job,id);
+  aiState[key]={status:"loading"}; aiRenderAll(key);
+  const path="/api/jobs/"+job+(kind==="delta" ? "/delta/explain" : "/findings/explain");
+  try{
+    const r=await api(path,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({finding_id:id})});
+    const d=r.body||{};
+    aiState[key] = (r.ok && d.available)
+      ? {status:"done", explanation:d.explanation, whatToVerify:d.what_to_verify, disclaimer:d.disclaimer,
+         engine: d.status ? {status:d.status, detail:d.detail||""} : null}
+      : {status:"unavailable", message:d.reason||d.error||("Request failed ("+r.code+")")};
+  }catch(e){ aiState[key]={status:"error", message:"AI Assist request failed."}; }
+  aiRenderAll(key);
+}
 /*EXPLORER-JS*/
 $("#again").onclick=()=>{ state.job=null; $("#confirmed").checked=false; $("#confirm").value=""; step(1); };
 

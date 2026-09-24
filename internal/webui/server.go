@@ -28,6 +28,10 @@ type Server struct {
 	runner   *orchestrator.Runner
 	store    store.Store
 	branding report.Branding
+
+	// ai, when set, enables the optional AI Assist buttons (see ai.go).
+	// nil = off, the default.
+	ai *AIAssist
 }
 
 // New builds the server.
@@ -60,6 +64,7 @@ func (s *Server) Handler() http.Handler {
 	mux.HandleFunc("DELETE /api/definitions/{id}", s.handleDeleteDefinition)
 	mux.HandleFunc("POST /api/definitions/{id}/run", s.handleRunDefinition)
 	mux.HandleFunc("POST /api/definitions/{id}/reauthorise", s.handleReauthorise)
+	s.registerAI(mux)
 	return securityHeaders(mux)
 }
 

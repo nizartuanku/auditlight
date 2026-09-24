@@ -42,6 +42,11 @@ func main() {
 		smtpFrom    = flag.String("smtp-from", "", "From address for notifications")
 		smtpTLS     = flag.Bool("smtp-starttls", true, "upgrade the SMTP connection with STARTTLS")
 		noSchedule  = flag.Bool("no-schedule", false, "do not run scheduled re-assessments")
+
+		aiURL        = flag.String("ai-assist-url", os.Getenv("AUDITLIGHT_AI_ASSIST_URL"), "optional hexward-ai sidecar URL for AI-narrated explanations, e.g. http://127.0.0.1:8435 (off when empty)")
+		aiKeyFile    = flag.String("ai-assist-key-file", os.Getenv("AUDITLIGHT_AI_ASSIST_KEY_FILE"), "API key file for a dedicated AI host or your own OpenAI-compatible endpoint (Pro/Team)")
+		aiLang       = flag.String("ai-assist-lang", os.Getenv("AUDITLIGHT_AI_ASSIST_LANG"), "language of AI explanations: en (default) or id")
+		aiNoThinking = flag.Bool("ai-assist-no-thinking", os.Getenv("AUDITLIGHT_AI_ASSIST_NO_THINKING") == "1", "disable reasoning mode (Qwen3 enterprise profiles)")
 	)
 	flag.Parse()
 
@@ -73,6 +78,12 @@ func main() {
 		Firm: *firm, Contact: *contact, WhiteLabel: *whiteLabel,
 	})
 
+	aiAssist, err := webui.NewAIAssist(webui.AIConfig{URL: *aiURL, KeyFile: *aiKeyFile, Language: *aiLang, NoThinking: *aiNoThinking})
+	if err != nil {
+		log.Fatalf("auditlight: %v", err)
+	}
+	srv.WithAI(aiAssist)
+
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
@@ -82,14 +93,14 @@ func main() {
 		go sched.Start(ctx)
 	}
 
-	banner(lic, *addr, *dataDir, *inMemory, scheduling, runner)
+	banner(lic, *addr, *dataDir, *inMemory, scheduling, runner, aiAssist)
 
 	if err := webui.Listen(ctx, *addr, srv.Handler()); err != nil && err != http.ErrServerClosed {
 		log.Fatalf("auditlight: %v", err)
 	}
 }
 
-func banner(lic license.State, addr, dataDir string, inMemory, scheduling bool, runner *orchestrator.Runner) {
+func banner(lic license.State, addr, dataDir string, inMemory, scheduling bool, runner *orchestrator.Runner, ai *webui.AIAssist) {
 	native, present, missing := 0, 0, 0
 	for _, c := range runner.Registry().Capabilities() {
 		switch {
@@ -128,6 +139,9 @@ func banner(lic license.State, addr, dataDir string, inMemory, scheduling bool, 
 		fmt.Printf("  schedule  off — recurring assessments need a paid licence\n")
 	} else {
 		fmt.Printf("  schedule  off — disabled with -no-schedule\n")
+	}
+	if ai != nil {
+		fmt.Printf("  ai assist on — explanations from %s (language %s)\n", ai.Endpoint, ai.Language)
 	}
 	fmt.Printf("  console   http://%s\n\n", url)
 }
