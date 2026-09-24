@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.3.2 — 2026-09-24
 
 - **AI Assist (optional): an ✨ Explain button on every finding, and ✨ Why did this disappear?
   on findings gone since the previous run.** When AuditLight is started with `-ai-assist-url`,

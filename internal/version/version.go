@@ -3,7 +3,7 @@ package version
 
 // Version is the release version. It is overridden at build time with
 // -ldflags "-X github.com/nizartuanku/auditlight/internal/version.Version=x.y.z".
-var Version = "0.3.1"
+var Version = "0.3.2"
 
 // Product is the display name.
 const Product = "AuditLight"
