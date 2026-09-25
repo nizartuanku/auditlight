@@ -239,8 +239,9 @@ only puts it into words. AuditLight never verifies a fix, so it never says "fixe
   or your own OpenAI-compatible endpoint, through `-ai-assist-key-file`. The recommended
   profile there is `smb` (Phi-4-mini-instruct). Enterprise uses Qwen3 or your own endpoint.
   "Why did this disappear?" follows the change report: Pro and Team.
-- **Language.** `-ai-assist-lang id` writes in Bahasa Indonesia. On the free SmolLM3 profile
-  Indonesian is experimental. English is recommended there.
+- **Language.** English is the supported language in this release. `-ai-assist-lang id`
+  (Bahasa Indonesia) remains as an unsupported preview. More languages will be added based on
+  demand.
 - **Honest limit.** Small local models sometimes add general background that is not in the
   evidence. For example, they may name a well-known attack, and that background can be wrong.
   Treat the explanation as a starting point. The finding, its evidence and its fix text remain
