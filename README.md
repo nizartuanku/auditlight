@@ -12,6 +12,8 @@ telemetry, and no special Linux distribution.
 
 ![AuditLight running an assessment and producing a report](docs/demo.gif)
 
+**See the actual output** — [a real assessment, run and exported](docs/samples/): two public test hosts, scanned for real on the free edition, findings and surface map reported exactly as the API returned them.
+
 ---
 
 ## Why it exists

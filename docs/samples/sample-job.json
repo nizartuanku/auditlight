@@ -1,0 +1,175 @@
+{
+    "id": "job20261009T0213241771",
+    "workspace": "sample",
+    "profile": "perimeter",
+    "trigger": "manual",
+    "state": "completed",
+    "created": "2026-10-09T09:13:24.17708794+07:00",
+    "started": "2026-10-09T09:13:24.19756669+07:00",
+    "finished": "2026-10-09T09:13:48.987120057+07:00",
+    "authz": {
+        "operator": "Nizar Tuanku",
+        "statement": "I am authorised to assess the targets listed below, and I accept responsibility for this assessment.",
+        "targets": [
+            "badssl.com",
+            "scanme.nmap.org"
+        ],
+        "scope": null,
+        "confirmed": true,
+        "at": "2026-10-09T02:13:24.17708794Z",
+        "entry_hash": "19dbba741e957aebe79aa73c41524a0e",
+        "prev_hash": ""
+    },
+    "targets": [
+        {
+            "target": "badssl.com",
+            "processed": true,
+            "verified": false,
+            "in_scope": true,
+            "findings": 26
+        },
+        {
+            "target": "scanme.nmap.org",
+            "processed": true,
+            "verified": false,
+            "in_scope": true,
+            "findings": 14
+        }
+    ],
+    "adapters": [
+        {
+            "name": "subdomain",
+            "kind": "native",
+            "started": "2026-10-09T09:13:24.242138466+07:00",
+            "duration": 87038860,
+            "ok": true,
+            "findings": 1,
+            "skipped": false,
+            "reason": "subdomain enumeration skipped: wildcard DNS in use"
+        },
+        {
+            "name": "subdomain",
+            "kind": "native",
+            "started": "2026-10-09T09:13:24.381675333+07:00",
+            "duration": 227072315,
+            "ok": true,
+            "findings": 1,
+            "skipped": false,
+            "reason": "subdomain enumeration skipped: wildcard DNS in use"
+        },
+        {
+            "name": "portscan",
+            "kind": "native",
+            "started": "2026-10-09T09:13:24.611764278+07:00",
+            "duration": 5005895914,
+            "ok": true,
+            "findings": 2,
+            "skipped": false
+        },
+        {
+            "name": "portscan",
+            "kind": "native",
+            "started": "2026-10-09T09:13:29.622119254+07:00",
+            "duration": 2502279100,
+            "ok": true,
+            "findings": 2,
+            "skipped": false
+        },
+        {
+            "name": "banner",
+            "kind": "native",
+            "started": "2026-10-09T09:13:32.128504318+07:00",
+            "duration": 22921,
+            "ok": true,
+            "findings": 0,
+            "skipped": false
+        },
+        {
+            "name": "banner",
+            "kind": "native",
+            "started": "2026-10-09T09:13:32.131938393+07:00",
+            "duration": 2695499743,
+            "ok": true,
+            "findings": 1,
+            "skipped": false
+        },
+        {
+            "name": "httpprobe",
+            "kind": "native",
+            "started": "2026-10-09T09:13:34.83178752+07:00",
+            "duration": 2411415102,
+            "ok": true,
+            "findings": 6,
+            "skipped": false
+        },
+        {
+            "name": "httpprobe",
+            "kind": "native",
+            "started": "2026-10-09T09:13:37.24803055+07:00",
+            "duration": 390217600,
+            "ok": true,
+            "findings": 3,
+            "skipped": false
+        },
+        {
+            "name": "tlsaudit",
+            "kind": "native",
+            "started": "2026-10-09T09:13:37.642451057+07:00",
+            "duration": 11120517081,
+            "ok": true,
+            "findings": 6,
+            "skipped": false
+        },
+        {
+            "name": "tlsaudit",
+            "kind": "native",
+            "started": "2026-10-09T09:13:48.76633222+07:00",
+            "duration": 203504250,
+            "ok": true,
+            "findings": 0,
+            "skipped": false,
+            "reason": "scanme.nmap.org:443: TLS handshake failed: dial tcp 45.33.32.156:443: connect: connection refused"
+        },
+        {
+            "name": "headers",
+            "kind": "native",
+            "started": "2026-10-09T09:13:48.973336616+07:00",
+            "duration": 59642,
+            "ok": true,
+            "findings": 9,
+            "skipped": false
+        },
+        {
+            "name": "headers",
+            "kind": "native",
+            "started": "2026-10-09T09:13:48.976171391+07:00",
+            "duration": 52879,
+            "ok": true,
+            "findings": 4,
+            "skipped": false
+        },
+        {
+            "name": "vulnsig",
+            "kind": "native",
+            "started": "2026-10-09T09:13:48.979093001+07:00",
+            "duration": 237274,
+            "ok": true,
+            "findings": 2,
+            "skipped": false
+        },
+        {
+            "name": "vulnsig",
+            "kind": "native",
+            "started": "2026-10-09T09:13:48.982098564+07:00",
+            "duration": 102520,
+            "ok": true,
+            "findings": 3,
+            "skipped": false
+        }
+    ],
+    "progress": 100,
+    "phase": "complete",
+    "findings_total": 40,
+    "findings_shown": 40,
+    "tier": "free"
+}

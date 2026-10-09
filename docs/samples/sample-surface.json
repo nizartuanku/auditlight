@@ -1,0 +1,209 @@
+{
+    "graph": {
+        "job_id": "job20261009T0213241771",
+        "roots": [
+            {
+                "id": "root:badssl.com",
+                "label": "badssl.com",
+                "kind": "root",
+                "severity": "medium",
+                "own": {
+                    "critical": 0,
+                    "high": 0,
+                    "medium": 0,
+                    "low": 0,
+                    "info": 1,
+                    "total": 1
+                },
+                "total": {
+                    "critical": 0,
+                    "high": 0,
+                    "medium": 8,
+                    "low": 9,
+                    "info": 9,
+                    "total": 26
+                },
+                "finding_ids": [
+                    "fc93effae8504622"
+                ],
+                "children": [
+                    {
+                        "id": "svc:badssl.com:80",
+                        "label": "80/tcp",
+                        "kind": "service",
+                        "parent": "root:badssl.com",
+                        "port": 80,
+                        "severity": "medium",
+                        "own": {
+                            "critical": 0,
+                            "high": 0,
+                            "medium": 2,
+                            "low": 4,
+                            "info": 3,
+                            "total": 9
+                        },
+                        "total": {
+                            "critical": 0,
+                            "high": 0,
+                            "medium": 2,
+                            "low": 4,
+                            "info": 3,
+                            "total": 9
+                        },
+                        "finding_ids": [
+                            "2bdc28e045bc0fa5",
+                            "524052b300fe0b39",
+                            "7a61b4880785323b",
+                            "a6788f45dd7dfc2a",
+                            "b9c4bd36b72fde27",
+                            "d497bdbbeced6d9c",
+                            "d534c961bc2ed64a",
+                            "e54efe3422434c44",
+                            "f3290e5f098dfad5"
+                        ]
+                    },
+                    {
+                        "id": "svc:badssl.com:443",
+                        "label": "443/tcp",
+                        "kind": "service",
+                        "parent": "root:badssl.com",
+                        "port": 443,
+                        "severity": "medium",
+                        "own": {
+                            "critical": 0,
+                            "high": 0,
+                            "medium": 6,
+                            "low": 5,
+                            "info": 5,
+                            "total": 16
+                        },
+                        "total": {
+                            "critical": 0,
+                            "high": 0,
+                            "medium": 6,
+                            "low": 5,
+                            "info": 5,
+                            "total": 16
+                        },
+                        "finding_ids": [
+                            "0441e7b1e66d17f6",
+                            "06d6bb538da765ca",
+                            "44972b1df828c146",
+                            "5f7451d215ab7838",
+                            "65765bea116f521b",
+                            "6a825fd18029bd52",
+                            "794c2720738dc661",
+                            "a72186bf4f9bd230",
+                            "ac47714ea6335d28",
+                            "c04e64d30b7d7c3a",
+                            "ccefc9439a221940",
+                            "ceeb159cfe6293cf",
+                            "e75c13267188fbaf",
+                            "f6ae6fd7e8ed5476",
+                            "f930bbc327626881",
+                            "fb214b9a09ac8955"
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "root:scanme.nmap.org",
+                "label": "scanme.nmap.org",
+                "kind": "root",
+                "severity": "high",
+                "own": {
+                    "critical": 0,
+                    "high": 0,
+                    "medium": 0,
+                    "low": 0,
+                    "info": 1,
+                    "total": 1
+                },
+                "total": {
+                    "critical": 0,
+                    "high": 1,
+                    "medium": 3,
+                    "low": 4,
+                    "info": 6,
+                    "total": 14
+                },
+                "finding_ids": [
+                    "4a0f0cef9b2c743e"
+                ],
+                "children": [
+                    {
+                        "id": "svc:scanme.nmap.org:80",
+                        "label": "80/tcp",
+                        "kind": "service",
+                        "parent": "root:scanme.nmap.org",
+                        "port": 80,
+                        "severity": "high",
+                        "own": {
+                            "critical": 0,
+                            "high": 1,
+                            "medium": 1,
+                            "low": 4,
+                            "info": 3,
+                            "total": 9
+                        },
+                        "total": {
+                            "critical": 0,
+                            "high": 1,
+                            "medium": 1,
+                            "low": 4,
+                            "info": 3,
+                            "total": 9
+                        },
+                        "finding_ids": [
+                            "120f78d3ca517a01",
+                            "21a8059a45896d34",
+                            "2cef82c9a24216b5",
+                            "53a1ce9ea5063a8e",
+                            "5ee866bf9b9fc855",
+                            "85b833ead6b3df1d",
+                            "8618164da46d7197",
+                            "c61c102fedccf16e",
+                            "f2a19dc37dc53b5b"
+                        ]
+                    },
+                    {
+                        "id": "svc:scanme.nmap.org:22",
+                        "label": "22/tcp",
+                        "kind": "service",
+                        "parent": "root:scanme.nmap.org",
+                        "port": 22,
+                        "severity": "medium",
+                        "own": {
+                            "critical": 0,
+                            "high": 0,
+                            "medium": 2,
+                            "low": 0,
+                            "info": 2,
+                            "total": 4
+                        },
+                        "total": {
+                            "critical": 0,
+                            "high": 0,
+                            "medium": 2,
+                            "low": 0,
+                            "info": 2,
+                            "total": 4
+                        },
+                        "finding_ids": [
+                            "30eba2a9d29b2ed8",
+                            "4385388916b3acf8",
+                            "5ab7a457e2b8af86",
+                            "5bcd41656e075f79"
+                        ]
+                    }
+                ]
+            }
+        ],
+        "hosts": 0,
+        "services": 4,
+        "truncated": 0,
+        "skipped_targets": 0,
+        "unplaced": 0
+    },
+    "notice": ""
+}

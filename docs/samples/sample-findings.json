@@ -1,0 +1,1018 @@
+{
+    "findings": [
+        {
+            "id": "2cef82c9a24216b5",
+            "title": "Apache httpd 2.4.7 is affected by known issues",
+            "target": "scanme.nmap.org",
+            "port": 80,
+            "category": "vuln",
+            "severity": "high",
+            "confidence": "likely",
+            "cve": [
+                "CVE-2021-41773",
+                "CVE-2021-42013"
+            ],
+            "evidence": [
+                {
+                    "kind": "inference",
+                    "label": "observed version",
+                    "value": "Apache httpd 2.4.7 (from httpprobe)"
+                },
+                {
+                    "kind": "inference",
+                    "label": "matched rule",
+                    "value": "versions below 2.4.52"
+                }
+            ],
+            "source_tools": [
+                "vulnsig"
+            ],
+            "description": "Apache httpd before 2.4.52 predates the fixes for the 2021 path traversal and RCE issues (CVE-2021-41773 and CVE-2021-42013), which were exploited in the wild.\n\nThis match is based on the version the service advertises. Distributions frequently back-port fixes without changing that string, so confirm the build before treating it as exploitable.",
+            "remediation": "Upgrade Apache httpd to 2.4.52 or later.",
+            "status": "open"
+        },
+        {
+            "id": "0441e7b1e66d17f6",
+            "title": "TLS 1.0 is still accepted",
+            "target": "badssl.com",
+            "port": 443,
+            "category": "tls",
+            "severity": "medium",
+            "confidence": "confirmed",
+            "evidence": [
+                {
+                    "kind": "tls",
+                    "label": "negotiated",
+                    "value": "handshake completed with TLS 1.0 on badssl.com:443"
+                }
+            ],
+            "source_tools": [
+                "tlsaudit"
+            ],
+            "description": "The server still accepts TLS 1.0. It was deprecated in 2021 (RFC 8996); its cipher constructions are no longer considered sound and major browsers refuse it.",
+            "remediation": "Disable TLS 1.0 and 1.1, and require TLS 1.2 as a minimum.",
+            "status": "open"
+        },
+        {
+            "id": "65765bea116f521b",
+            "title": "8 cipher suite(s) considered insecure are accepted",
+            "target": "badssl.com",
+            "port": 443,
+            "category": "tls",
+            "severity": "medium",
+            "confidence": "confirmed",
+            "cwe": [
+                "CWE-327"
+            ],
+            "evidence": [
+                {
+                    "kind": "tls",
+                    "label": "accepted weak suites",
+                    "value": "TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA, TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256, TLS_RSA_WITH_3DES_EDE_CBC_SHA, TLS_RSA_WITH_AES_128_CBC_SHA, TLS_RSA_WITH_AES_128_CBC_SHA256, TLS_RSA_WITH_AES_128_GCM_SHA256, TLS_RSA_WITH_AES_256_CBC_SHA, TLS_RSA_WITH_AES_256_GCM_SHA384"
+                }
+            ],
+            "source_tools": [
+                "tlsaudit"
+            ],
+            "description": "The server completed a handshake using cipher suites that are no longer considered safe. These include constructions vulnerable to known padding and stream-cipher attacks.",
+            "remediation": "Restrict the cipher list to AEAD suites (AES-GCM or ChaCha20-Poly1305) with forward secrecy, and remove RC4, 3DES and CBC-mode suites.",
+            "status": "open"
+        },
+        {
+            "id": "e75c13267188fbaf",
+            "title": "TLS 1.1 is still accepted",
+            "target": "badssl.com",
+            "port": 443,
+            "category": "tls",
+            "severity": "medium",
+            "confidence": "confirmed",
+            "evidence": [
+                {
+                    "kind": "tls",
+                    "label": "negotiated",
+                    "value": "handshake completed with TLS 1.1 on badssl.com:443"
+                }
+            ],
+            "source_tools": [
+                "tlsaudit"
+            ],
+            "description": "The server still accepts TLS 1.1, deprecated alongside TLS 1.0 in RFC 8996.",
+            "remediation": "Disable TLS 1.1 and require TLS 1.2 as a minimum.",
+            "status": "open"
+        },
+        {
+            "id": "2bdc28e045bc0fa5",
+            "title": "Content Security Policy is not set",
+            "target": "badssl.com",
+            "port": 80,
+            "category": "web",
+            "severity": "medium",
+            "confidence": "confirmed",
+            "cwe": [
+                "CWE-693"
+            ],
+            "evidence": [
+                {
+                    "kind": "header",
+                    "label": "absent",
+                    "value": "Content-Security-Policy was not present in the response"
+                }
+            ],
+            "source_tools": [
+                "headers"
+            ],
+            "description": "Without a CSP the browser will execute any script the page references. A CSP is the main structural defence against cross-site scripting.",
+            "remediation": "Introduce a Content-Security-Policy, starting in report-only mode to find breakage before enforcing it.",
+            "status": "open"
+        },
+        {
+            "id": "5f7451d215ab7838",
+            "title": "Content Security Policy is not set",
+            "target": "badssl.com",
+            "port": 443,
+            "category": "web",
+            "severity": "medium",
+            "confidence": "confirmed",
+            "cwe": [
+                "CWE-693"
+            ],
+            "evidence": [
+                {
+                    "kind": "header",
+                    "label": "absent",
+                    "value": "Content-Security-Policy was not present in the response"
+                }
+            ],
+            "source_tools": [
+                "headers"
+            ],
+            "description": "Without a CSP the browser will execute any script the page references. A CSP is the main structural defence against cross-site scripting.",
+            "remediation": "Introduce a Content-Security-Policy, starting in report-only mode to find breakage before enforcing it.",
+            "status": "open"
+        },
+        {
+            "id": "a72186bf4f9bd230",
+            "title": "HSTS is not set",
+            "target": "badssl.com",
+            "port": 443,
+            "category": "web",
+            "severity": "medium",
+            "confidence": "confirmed",
+            "cwe": [
+                "CWE-693"
+            ],
+            "evidence": [
+                {
+                    "kind": "header",
+                    "label": "absent",
+                    "value": "Strict-Transport-Security was not present in the response"
+                }
+            ],
+            "source_tools": [
+                "headers"
+            ],
+            "description": "Without Strict-Transport-Security a browser will still try plain HTTP first, which leaves room for an attacker on the path to keep the connection unencrypted.",
+            "remediation": "Send `Strict-Transport-Security: max-age=31536000; includeSubDomains` over HTTPS, after confirming every subdomain can serve TLS.",
+            "status": "open"
+        },
+        {
+            "id": "21a8059a45896d34",
+            "title": "Content Security Policy is not set",
+            "target": "scanme.nmap.org",
+            "port": 80,
+            "category": "web",
+            "severity": "medium",
+            "confidence": "confirmed",
+            "cwe": [
+                "CWE-693"
+            ],
+            "evidence": [
+                {
+                    "kind": "header",
+                    "label": "absent",
+                    "value": "Content-Security-Policy was not present in the response"
+                }
+            ],
+            "source_tools": [
+                "headers"
+            ],
+            "description": "Without a CSP the browser will execute any script the page references. A CSP is the main structural defence against cross-site scripting.",
+            "remediation": "Introduce a Content-Security-Policy, starting in report-only mode to find breakage before enforcing it.",
+            "status": "open"
+        },
+        {
+            "id": "c04e64d30b7d7c3a",
+            "title": "nginx 1.10.3 is affected by known issues",
+            "target": "badssl.com",
+            "port": 443,
+            "category": "vuln",
+            "severity": "medium",
+            "confidence": "likely",
+            "cve": [
+                "CVE-2021-23017"
+            ],
+            "evidence": [
+                {
+                    "kind": "inference",
+                    "label": "observed version",
+                    "value": "nginx 1.10.3 (from httpprobe)"
+                },
+                {
+                    "kind": "inference",
+                    "label": "matched rule",
+                    "value": "versions below 1.20.1"
+                }
+            ],
+            "source_tools": [
+                "vulnsig"
+            ],
+            "description": "nginx before 1.20.1 predates the fix for the DNS resolver off-by-one issue CVE-2021-23017.\n\nThis match is based on the version the service advertises. Distributions frequently back-port fixes without changing that string, so confirm the build before treating it as exploitable.",
+            "remediation": "Upgrade nginx to 1.20.1 or later.",
+            "status": "open"
+        },
+        {
+            "id": "e54efe3422434c44",
+            "title": "nginx 1.10.3 is affected by known issues",
+            "target": "badssl.com",
+            "port": 80,
+            "category": "vuln",
+            "severity": "medium",
+            "confidence": "likely",
+            "cve": [
+                "CVE-2021-23017"
+            ],
+            "evidence": [
+                {
+                    "kind": "inference",
+                    "label": "observed version",
+                    "value": "nginx 1.10.3 (from httpprobe)"
+                },
+                {
+                    "kind": "inference",
+                    "label": "matched rule",
+                    "value": "versions below 1.20.1"
+                }
+            ],
+            "source_tools": [
+                "vulnsig"
+            ],
+            "description": "nginx before 1.20.1 predates the fix for the DNS resolver off-by-one issue CVE-2021-23017.\n\nThis match is based on the version the service advertises. Distributions frequently back-port fixes without changing that string, so confirm the build before treating it as exploitable.",
+            "remediation": "Upgrade nginx to 1.20.1 or later.",
+            "status": "open"
+        },
+        {
+            "id": "30eba2a9d29b2ed8",
+            "title": "OpenSSH 6.6.1 is affected by known issues",
+            "target": "scanme.nmap.org",
+            "port": 22,
+            "category": "vuln",
+            "severity": "medium",
+            "confidence": "likely",
+            "cve": [
+                "CVE-2016-10009",
+                "CVE-2016-10012"
+            ],
+            "evidence": [
+                {
+                    "kind": "inference",
+                    "label": "observed version",
+                    "value": "OpenSSH 6.6.1 (from banner)"
+                },
+                {
+                    "kind": "inference",
+                    "label": "matched rule",
+                    "value": "versions below 7.4"
+                }
+            ],
+            "source_tools": [
+                "vulnsig"
+            ],
+            "description": "OpenSSH releases before 7.4 are long past support and carry a series of documented weaknesses, including the CVE-2016-10009 agent-forwarding issue.\n\nThis match is based on the version the service advertises. Distributions frequently back-port fixes without changing that string, so confirm the build before treating it as exploitable.",
+            "remediation": "Upgrade OpenSSH to a currently supported release.",
+            "status": "open"
+        },
+        {
+            "id": "4385388916b3acf8",
+            "title": "OpenSSH 2.0 is affected by known issues",
+            "target": "scanme.nmap.org",
+            "port": 22,
+            "category": "vuln",
+            "severity": "medium",
+            "confidence": "likely",
+            "cve": [
+                "CVE-2016-10009",
+                "CVE-2016-10012"
+            ],
+            "evidence": [
+                {
+                    "kind": "inference",
+                    "label": "observed version",
+                    "value": "OpenSSH 2.0 (from banner)"
+                },
+                {
+                    "kind": "inference",
+                    "label": "matched rule",
+                    "value": "versions below 7.4"
+                }
+            ],
+            "source_tools": [
+                "vulnsig"
+            ],
+            "description": "OpenSSH releases before 7.4 are long past support and carry a series of documented weaknesses, including the CVE-2016-10009 agent-forwarding issue.\n\nThis match is based on the version the service advertises. Distributions frequently back-port fixes without changing that string, so confirm the build before treating it as exploitable.",
+            "remediation": "Upgrade OpenSSH to a currently supported release.",
+            "status": "open"
+        },
+        {
+            "id": "06d6bb538da765ca",
+            "title": "TLS 1.3 is not offered",
+            "target": "badssl.com",
+            "port": 443,
+            "category": "tls",
+            "severity": "low",
+            "confidence": "confirmed",
+            "source_tools": [
+                "tlsaudit"
+            ],
+            "description": "The server negotiates TLS 1.2 but not TLS 1.3. TLS 1.3 removes the legacy constructions that most TLS attacks rely on and completes the handshake in fewer round trips.",
+            "remediation": "Enable TLS 1.3 alongside TLS 1.2.",
+            "status": "open"
+        },
+        {
+            "id": "44972b1df828c146",
+            "title": "Server header discloses software details",
+            "target": "badssl.com",
+            "port": 443,
+            "category": "web",
+            "severity": "low",
+            "confidence": "confirmed",
+            "evidence": [
+                {
+                    "kind": "header",
+                    "label": "Server",
+                    "value": "nginx/1.10.3 (Ubuntu)"
+                }
+            ],
+            "source_tools": [
+                "httpprobe"
+            ],
+            "description": "The Server response header reveals \"nginx/1.10.3 (Ubuntu)\". Published version numbers let an attacker match the host to known vulnerabilities from a distance, before touching it.",
+            "remediation": "Remove or generalise the Server header at the web server or reverse proxy.",
+            "status": "open"
+        },
+        {
+            "id": "524052b300fe0b39",
+            "title": "Framing is not restricted",
+            "target": "badssl.com",
+            "port": 80,
+            "category": "web",
+            "severity": "low",
+            "confidence": "confirmed",
+            "cwe": [
+                "CWE-693"
+            ],
+            "evidence": [
+                {
+                    "kind": "header",
+                    "label": "absent",
+                    "value": "X-Frame-Options was not present in the response"
+                }
+            ],
+            "source_tools": [
+                "headers"
+            ],
+            "description": "Neither X-Frame-Options nor a CSP frame-ancestors directive is present, so the page can be embedded in another site and used for clickjacking.",
+            "remediation": "Send `X-Frame-Options: DENY`, or better, a `frame-ancestors` directive in the Content-Security-Policy.",
+            "status": "open"
+        },
+        {
+            "id": "a6788f45dd7dfc2a",
+            "title": "Server header discloses software details",
+            "target": "badssl.com",
+            "port": 80,
+            "category": "web",
+            "severity": "low",
+            "confidence": "confirmed",
+            "evidence": [
+                {
+                    "kind": "header",
+                    "label": "Server",
+                    "value": "nginx/1.10.3 (Ubuntu)"
+                }
+            ],
+            "source_tools": [
+                "httpprobe"
+            ],
+            "description": "The Server response header reveals \"nginx/1.10.3 (Ubuntu)\". Published version numbers let an attacker match the host to known vulnerabilities from a distance, before touching it.",
+            "remediation": "Remove or generalise the Server header at the web server or reverse proxy.",
+            "status": "open"
+        },
+        {
+            "id": "ac47714ea6335d28",
+            "title": "X-Content-Type-Options is not set",
+            "target": "badssl.com",
+            "port": 443,
+            "category": "web",
+            "severity": "low",
+            "confidence": "confirmed",
+            "cwe": [
+                "CWE-693"
+            ],
+            "evidence": [
+                {
+                    "kind": "header",
+                    "label": "absent",
+                    "value": "X-Content-Type-Options was not present in the response"
+                }
+            ],
+            "source_tools": [
+                "headers"
+            ],
+            "description": "Without `nosniff` a browser may second-guess the declared content type and execute a file the server meant to serve as data.",
+            "remediation": "Send `X-Content-Type-Options: nosniff`.",
+            "status": "open"
+        },
+        {
+            "id": "b9c4bd36b72fde27",
+            "title": "Referrer-Policy is not set",
+            "target": "badssl.com",
+            "port": 80,
+            "category": "web",
+            "severity": "low",
+            "confidence": "confirmed",
+            "cwe": [
+                "CWE-693"
+            ],
+            "evidence": [
+                {
+                    "kind": "header",
+                    "label": "absent",
+                    "value": "Referrer-Policy was not present in the response"
+                }
+            ],
+            "source_tools": [
+                "headers"
+            ],
+            "description": "Without a referrer policy the full URL, including anything sensitive in the path or query, is sent to third-party sites the page links to.",
+            "remediation": "Send `Referrer-Policy: strict-origin-when-cross-origin`.",
+            "status": "open"
+        },
+        {
+            "id": "d534c961bc2ed64a",
+            "title": "X-Content-Type-Options is not set",
+            "target": "badssl.com",
+            "port": 80,
+            "category": "web",
+            "severity": "low",
+            "confidence": "confirmed",
+            "cwe": [
+                "CWE-693"
+            ],
+            "evidence": [
+                {
+                    "kind": "header",
+                    "label": "absent",
+                    "value": "X-Content-Type-Options was not present in the response"
+                }
+            ],
+            "source_tools": [
+                "headers"
+            ],
+            "description": "Without `nosniff` a browser may second-guess the declared content type and execute a file the server meant to serve as data.",
+            "remediation": "Send `X-Content-Type-Options: nosniff`.",
+            "status": "open"
+        },
+        {
+            "id": "f6ae6fd7e8ed5476",
+            "title": "Referrer-Policy is not set",
+            "target": "badssl.com",
+            "port": 443,
+            "category": "web",
+            "severity": "low",
+            "confidence": "confirmed",
+            "cwe": [
+                "CWE-693"
+            ],
+            "evidence": [
+                {
+                    "kind": "header",
+                    "label": "absent",
+                    "value": "Referrer-Policy was not present in the response"
+                }
+            ],
+            "source_tools": [
+                "headers"
+            ],
+            "description": "Without a referrer policy the full URL, including anything sensitive in the path or query, is sent to third-party sites the page links to.",
+            "remediation": "Send `Referrer-Policy: strict-origin-when-cross-origin`.",
+            "status": "open"
+        },
+        {
+            "id": "fb214b9a09ac8955",
+            "title": "Framing is not restricted",
+            "target": "badssl.com",
+            "port": 443,
+            "category": "web",
+            "severity": "low",
+            "confidence": "confirmed",
+            "cwe": [
+                "CWE-693"
+            ],
+            "evidence": [
+                {
+                    "kind": "header",
+                    "label": "absent",
+                    "value": "X-Frame-Options was not present in the response"
+                }
+            ],
+            "source_tools": [
+                "headers"
+            ],
+            "description": "Neither X-Frame-Options nor a CSP frame-ancestors directive is present, so the page can be embedded in another site and used for clickjacking.",
+            "remediation": "Send `X-Frame-Options: DENY`, or better, a `frame-ancestors` directive in the Content-Security-Policy.",
+            "status": "open"
+        },
+        {
+            "id": "120f78d3ca517a01",
+            "title": "Framing is not restricted",
+            "target": "scanme.nmap.org",
+            "port": 80,
+            "category": "web",
+            "severity": "low",
+            "confidence": "confirmed",
+            "cwe": [
+                "CWE-693"
+            ],
+            "evidence": [
+                {
+                    "kind": "header",
+                    "label": "absent",
+                    "value": "X-Frame-Options was not present in the response"
+                }
+            ],
+            "source_tools": [
+                "headers"
+            ],
+            "description": "Neither X-Frame-Options nor a CSP frame-ancestors directive is present, so the page can be embedded in another site and used for clickjacking.",
+            "remediation": "Send `X-Frame-Options: DENY`, or better, a `frame-ancestors` directive in the Content-Security-Policy.",
+            "status": "open"
+        },
+        {
+            "id": "53a1ce9ea5063a8e",
+            "title": "Server header discloses software details",
+            "target": "scanme.nmap.org",
+            "port": 80,
+            "category": "web",
+            "severity": "low",
+            "confidence": "confirmed",
+            "evidence": [
+                {
+                    "kind": "header",
+                    "label": "Server",
+                    "value": "Apache/2.4.7 (Ubuntu)"
+                }
+            ],
+            "source_tools": [
+                "httpprobe"
+            ],
+            "description": "The Server response header reveals \"Apache/2.4.7 (Ubuntu)\". Published version numbers let an attacker match the host to known vulnerabilities from a distance, before touching it.",
+            "remediation": "Remove or generalise the Server header at the web server or reverse proxy.",
+            "status": "open"
+        },
+        {
+            "id": "8618164da46d7197",
+            "title": "X-Content-Type-Options is not set",
+            "target": "scanme.nmap.org",
+            "port": 80,
+            "category": "web",
+            "severity": "low",
+            "confidence": "confirmed",
+            "cwe": [
+                "CWE-693"
+            ],
+            "evidence": [
+                {
+                    "kind": "header",
+                    "label": "absent",
+                    "value": "X-Content-Type-Options was not present in the response"
+                }
+            ],
+            "source_tools": [
+                "headers"
+            ],
+            "description": "Without `nosniff` a browser may second-guess the declared content type and execute a file the server meant to serve as data.",
+            "remediation": "Send `X-Content-Type-Options: nosniff`.",
+            "status": "open"
+        },
+        {
+            "id": "c61c102fedccf16e",
+            "title": "Referrer-Policy is not set",
+            "target": "scanme.nmap.org",
+            "port": 80,
+            "category": "web",
+            "severity": "low",
+            "confidence": "confirmed",
+            "cwe": [
+                "CWE-693"
+            ],
+            "evidence": [
+                {
+                    "kind": "header",
+                    "label": "absent",
+                    "value": "Referrer-Policy was not present in the response"
+                }
+            ],
+            "source_tools": [
+                "headers"
+            ],
+            "description": "Without a referrer policy the full URL, including anything sensitive in the path or query, is sent to third-party sites the page links to.",
+            "remediation": "Send `Referrer-Policy: strict-origin-when-cross-origin`.",
+            "status": "open"
+        },
+        {
+            "id": "fc93effae8504622",
+            "title": "DNS wildcard record in use",
+            "target": "badssl.com",
+            "category": "discovery",
+            "severity": "info",
+            "confidence": "confirmed",
+            "evidence": [
+                {
+                    "kind": "lookup",
+                    "label": "wildcard probe",
+                    "value": "auditlight-wildcard-probe-146692.badssl.com resolved to 104.154.89.105"
+                }
+            ],
+            "source_tools": [
+                "subdomain"
+            ],
+            "description": "A randomly generated name resolved, so this domain answers for names that do not exist. Subdomain enumeration cannot distinguish real hosts here and was skipped.",
+            "status": "informational"
+        },
+        {
+            "id": "4a0f0cef9b2c743e",
+            "title": "DNS wildcard record in use",
+            "target": "scanme.nmap.org",
+            "category": "discovery",
+            "severity": "info",
+            "confidence": "confirmed",
+            "evidence": [
+                {
+                    "kind": "lookup",
+                    "label": "wildcard probe",
+                    "value": "auditlight-wildcard-probe-697632.nmap.org resolved to 50.116.1.184, 2600:3c01:e000:3e6::6d4e:7061"
+                }
+            ],
+            "source_tools": [
+                "subdomain"
+            ],
+            "description": "A randomly generated name resolved, so this domain answers for names that do not exist. Subdomain enumeration cannot distinguish real hosts here and was skipped.",
+            "status": "informational"
+        },
+        {
+            "id": "ceeb159cfe6293cf",
+            "title": "HTTPS reachable on port 443",
+            "target": "badssl.com",
+            "port": 443,
+            "category": "network",
+            "severity": "info",
+            "confidence": "confirmed",
+            "evidence": [
+                {
+                    "kind": "connection",
+                    "label": "handshake",
+                    "value": "TCP connect to badssl.com:443 succeeded in 300ms"
+                }
+            ],
+            "source_tools": [
+                "portscan"
+            ],
+            "description": "HTTPS is reachable on TCP port 443. Every reachable service widens the attack surface and should be deliberate rather than incidental.",
+            "remediation": "Confirm this service is meant to be reachable from where the scan ran. If it is not, restrict it at the firewall or bind it to an internal interface.",
+            "status": "informational"
+        },
+        {
+            "id": "f3290e5f098dfad5",
+            "title": "HTTP reachable on port 80",
+            "target": "badssl.com",
+            "port": 80,
+            "category": "network",
+            "severity": "info",
+            "confidence": "confirmed",
+            "evidence": [
+                {
+                    "kind": "connection",
+                    "label": "handshake",
+                    "value": "TCP connect to badssl.com:80 succeeded in 297ms"
+                }
+            ],
+            "source_tools": [
+                "portscan"
+            ],
+            "description": "HTTP is reachable on TCP port 80. Every reachable service widens the attack surface and should be deliberate rather than incidental.",
+            "remediation": "Confirm this service is meant to be reachable from where the scan ran. If it is not, restrict it at the firewall or bind it to an internal interface.",
+            "status": "informational"
+        },
+        {
+            "id": "5ab7a457e2b8af86",
+            "title": "SSH reachable on port 22",
+            "target": "scanme.nmap.org",
+            "port": 22,
+            "category": "network",
+            "severity": "info",
+            "confidence": "confirmed",
+            "evidence": [
+                {
+                    "kind": "connection",
+                    "label": "handshake",
+                    "value": "TCP connect to scanme.nmap.org:22 succeeded in 195ms"
+                }
+            ],
+            "source_tools": [
+                "portscan"
+            ],
+            "description": "SSH is reachable on TCP port 22. Every reachable service widens the attack surface and should be deliberate rather than incidental.",
+            "remediation": "Confirm this service is meant to be reachable from where the scan ran. If it is not, restrict it at the firewall or bind it to an internal interface.",
+            "status": "informational"
+        },
+        {
+            "id": "5bcd41656e075f79",
+            "title": "SSH on port 22 identifies itself",
+            "target": "scanme.nmap.org",
+            "port": 22,
+            "category": "network",
+            "severity": "info",
+            "confidence": "confirmed",
+            "evidence": [
+                {
+                    "kind": "banner",
+                    "label": "scanme.nmap.org:22",
+                    "value": "SSH-2.0-OpenSSH_6.6.1p1 Ubuntu-2ubuntu2.13"
+                }
+            ],
+            "source_tools": [
+                "banner"
+            ],
+            "description": "The service announces software details on connection. Version banners let anyone scanning the internet match the host against known vulnerabilities without touching it further.",
+            "remediation": "Suppress or generalise the version banner where the software allows it. This is defence in depth, not a fix in itself \u2014 keep patching.",
+            "status": "informational"
+        },
+        {
+            "id": "85b833ead6b3df1d",
+            "title": "HTTP reachable on port 80",
+            "target": "scanme.nmap.org",
+            "port": 80,
+            "category": "network",
+            "severity": "info",
+            "confidence": "confirmed",
+            "evidence": [
+                {
+                    "kind": "connection",
+                    "label": "handshake",
+                    "value": "TCP connect to scanme.nmap.org:80 succeeded in 203ms"
+                }
+            ],
+            "source_tools": [
+                "portscan"
+            ],
+            "description": "HTTP is reachable on TCP port 80. Every reachable service widens the attack surface and should be deliberate rather than incidental.",
+            "remediation": "Confirm this service is meant to be reachable from where the scan ran. If it is not, restrict it at the firewall or bind it to an internal interface.",
+            "status": "informational"
+        },
+        {
+            "id": "ccefc9439a221940",
+            "title": "TLS connection details",
+            "target": "badssl.com",
+            "port": 443,
+            "category": "tls",
+            "severity": "info",
+            "confidence": "confirmed",
+            "evidence": [
+                {
+                    "kind": "tls",
+                    "label": "version",
+                    "value": "TLS 1.2"
+                },
+                {
+                    "kind": "tls",
+                    "label": "cipher",
+                    "value": "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256"
+                },
+                {
+                    "kind": "certificate",
+                    "label": "subject",
+                    "value": "CN=*.badssl.com"
+                },
+                {
+                    "kind": "certificate",
+                    "label": "expires",
+                    "value": "28 December 2026"
+                },
+                {
+                    "kind": "certificate",
+                    "label": "names",
+                    "value": "*.badssl.com, badssl.com"
+                }
+            ],
+            "source_tools": [
+                "tlsaudit"
+            ],
+            "description": "Record of the protocol version, cipher suite and certificate observed.",
+            "status": "informational"
+        },
+        {
+            "id": "f930bbc327626881",
+            "title": "TLS protocol versions accepted",
+            "target": "badssl.com",
+            "port": 443,
+            "category": "tls",
+            "severity": "info",
+            "confidence": "confirmed",
+            "evidence": [
+                {
+                    "kind": "tls",
+                    "label": "accepted versions",
+                    "value": "TLS 1.0, TLS 1.1, TLS 1.2"
+                }
+            ],
+            "source_tools": [
+                "tlsaudit"
+            ],
+            "description": "Record of which protocol versions completed a handshake.",
+            "status": "informational"
+        },
+        {
+            "id": "6a825fd18029bd52",
+            "title": "HTTP service responding on port 443",
+            "target": "badssl.com",
+            "port": 443,
+            "category": "web",
+            "severity": "info",
+            "confidence": "confirmed",
+            "evidence": [
+                {
+                    "kind": "http",
+                    "label": "url",
+                    "value": "https://badssl.com:443/"
+                },
+                {
+                    "kind": "http",
+                    "label": "status",
+                    "value": "200 OK"
+                },
+                {
+                    "kind": "http",
+                    "label": "title",
+                    "value": "badssl.com"
+                },
+                {
+                    "kind": "headers",
+                    "label": "response headers",
+                    "value": "Cache-Control: no-store\nContent-Type: text/html\nDate: Fri, 09 Oct 2026 02:13:37 GMT\nEtag: W/\"6ac56181-2d99\"\nLast-Modified: Tue, 06 Oct 2026 21:00:49 GMT\nServer: nginx/1.10.3 (Ubuntu)"
+                }
+            ],
+            "source_tools": [
+                "httpprobe"
+            ],
+            "description": "An HTTP service answered on https://badssl.com:443/ with status 200 in 937ms. This records the web surface that exists; the checks that follow inspect how it is configured.",
+            "status": "informational"
+        },
+        {
+            "id": "7a61b4880785323b",
+            "title": "HTTP service responding on port 80",
+            "target": "badssl.com",
+            "port": 80,
+            "category": "web",
+            "severity": "info",
+            "confidence": "confirmed",
+            "evidence": [
+                {
+                    "kind": "http",
+                    "label": "url",
+                    "value": "http://badssl.com:80/"
+                },
+                {
+                    "kind": "http",
+                    "label": "status",
+                    "value": "200 OK"
+                },
+                {
+                    "kind": "http",
+                    "label": "title",
+                    "value": "badssl.com"
+                },
+                {
+                    "kind": "headers",
+                    "label": "response headers",
+                    "value": "Cache-Control: no-store\nContent-Type: text/html\nDate: Fri, 09 Oct 2026 02:13:36 GMT\nEtag: W/\"6ac56181-2d99\"\nLast-Modified: Tue, 06 Oct 2026 21:00:49 GMT\nServer: nginx/1.10.3 (Ubuntu)"
+                }
+            ],
+            "source_tools": [
+                "httpprobe"
+            ],
+            "description": "An HTTP service answered on http://badssl.com:80/ with status 200 in 1.473s. This records the web surface that exists; the checks that follow inspect how it is configured.",
+            "status": "informational"
+        },
+        {
+            "id": "5ee866bf9b9fc855",
+            "title": "HTTP service responding on port 80",
+            "target": "scanme.nmap.org",
+            "port": 80,
+            "category": "web",
+            "severity": "info",
+            "confidence": "confirmed",
+            "evidence": [
+                {
+                    "kind": "http",
+                    "label": "url",
+                    "value": "http://scanme.nmap.org:80/"
+                },
+                {
+                    "kind": "http",
+                    "label": "status",
+                    "value": "200 OK"
+                },
+                {
+                    "kind": "http",
+                    "label": "title",
+                    "value": "Go ahead and ScanMe!"
+                },
+                {
+                    "kind": "headers",
+                    "label": "response headers",
+                    "value": "Accept-Ranges: bytes\nContent-Type: text/html\nDate: Fri, 09 Oct 2026 02:13:37 GMT\nServer: Apache/2.4.7 (Ubuntu)\nVary: Accept-Encoding"
+                }
+            ],
+            "source_tools": [
+                "httpprobe"
+            ],
+            "description": "An HTTP service answered on http://scanme.nmap.org:80/ with status 200 in 389ms. This records the web surface that exists; the checks that follow inspect how it is configured.",
+            "status": "informational"
+        },
+        {
+            "id": "794c2720738dc661",
+            "title": "Technology stack observable from the response",
+            "target": "badssl.com",
+            "port": 443,
+            "category": "web",
+            "severity": "info",
+            "confidence": "likely",
+            "evidence": [
+                {
+                    "kind": "fingerprint",
+                    "label": "technologies",
+                    "value": "nginx"
+                }
+            ],
+            "source_tools": [
+                "httpprobe"
+            ],
+            "description": "The response exposes markers identifying the technologies in use. This is inventory information: it is useful for your own asset register, and equally useful to anyone else.",
+            "status": "informational"
+        },
+        {
+            "id": "d497bdbbeced6d9c",
+            "title": "Technology stack observable from the response",
+            "target": "badssl.com",
+            "port": 80,
+            "category": "web",
+            "severity": "info",
+            "confidence": "likely",
+            "evidence": [
+                {
+                    "kind": "fingerprint",
+                    "label": "technologies",
+                    "value": "nginx"
+                }
+            ],
+            "source_tools": [
+                "httpprobe"
+            ],
+            "description": "The response exposes markers identifying the technologies in use. This is inventory information: it is useful for your own asset register, and equally useful to anyone else.",
+            "status": "informational"
+        },
+        {
+            "id": "f2a19dc37dc53b5b",
+            "title": "Technology stack observable from the response",
+            "target": "scanme.nmap.org",
+            "port": 80,
+            "category": "web",
+            "severity": "info",
+            "confidence": "likely",
+            "evidence": [
+                {
+                    "kind": "fingerprint",
+                    "label": "technologies",
+                    "value": "Apache httpd"
+                }
+            ],
+            "source_tools": [
+                "httpprobe"
+            ],
+            "description": "The response exposes markers identifying the technologies in use. This is inventory information: it is useful for your own asset register, and equally useful to anyone else.",
+            "status": "informational"
+        }
+    ],
+    "notice": "",
+    "shown": 40,
+    "total": 40
+}
