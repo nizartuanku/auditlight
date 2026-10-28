@@ -35,7 +35,9 @@ not a default setting you can switch off — the orchestrator refuses intrusive 
 when passing them to an external tool.
 
 **2. It works offline.** Every built-in check is implemented on the Go standard library.
-The binary links no third-party module, so it runs on an air-gapped host, and the reports it
+The binary links no third-party module (its one dependency is Hexward's own
+[hexward-core](https://github.com/nizartuanku/hexward-core) export module, itself standard
+library only), so it runs on an air-gapped host, and the reports it
 writes are self-contained HTML that open with no network access.
 
 **3. Authorisation is enforced, not assumed.** No job starts without a recorded authorisation
@@ -49,8 +51,8 @@ something you clicked once.
 
 ```sh
 sha256sum -c SHA256SUMS
-tar xzf auditlight-free-0.3.2-linux-amd64.tar.gz
-cd auditlight-0.3.2
+tar xzf auditlight-free-0.3.3-linux-amd64.tar.gz
+cd auditlight-0.3.3
 ./auditlight
 ```
 
@@ -306,6 +308,7 @@ branding, and control mapping to ISO 27001:2022, CIS v8, NIST CSF 2.0 and UU PDP
 | Export (JSON) | — | yes | yes |
 | Control mapping | — | ISO 27001, CIS v8 | + NIST CSF 2.0, UU PDP |
 | Attack surface map + explorer | yes | yes | yes |
+| SIEM export (Wazuh, Splunk, syslog, webhook) | yes | yes | yes |
 | Assessment timeline | — | yes | yes |
 | Report branding | — | logo and name | full white-label |
 
@@ -336,7 +339,64 @@ branding, and control mapping to ISO 27001:2022, CIS v8, NIST CSF 2.0 and UU PDP
   -ai-assist-key-file string  API key file for a dedicated AI host or your own endpoint (Pro/Team)
   -ai-assist-lang string      language of AI explanations: en (default) or id
   -ai-assist-no-thinking      disable reasoning mode (Qwen3 enterprise profiles)
+  -export-file, -syslog, -hec-url, -export-webhook …  SIEM export, see below
 ```
+
+## Send findings to your SIEM (Wazuh, Splunk, Elastic)
+
+Every completed assessment can leave as
+[Hexward Finding Schema](https://github.com/nizartuanku/hexward-core/blob/main/SCHEMA.md)
+events (`hexward.finding/1`), the same shape every Hexward tool emits. Write a
+SIEM rule once and it covers the whole line. **Available in every edition,
+Free included** — one-off assessments as well as saved and scheduled ones.
+
+What is sent follows the Change Report, so the SIEM sees movement rather than
+the same findings every week:
+
+| In the run | Sent as |
+|---|---|
+| First run (no previous run to compare against), or a one-off assessment | every finding `opened` |
+| New since the previous run | `opened` |
+| Regressed (more severe than before) | `opened`, with the new severity |
+| Resolved (gone from the results) | `resolved` |
+| Persisting or improved | nothing — already known to the SIEM |
+
+```bash
+# NDJSON file for a Wazuh agent, Splunk Universal Forwarder or Elastic Agent
+auditlight -export-file /var/log/hexward/auditlight.ndjson
+
+# Splunk HTTP Event Collector (token read from a file, never a flag)
+auditlight -hec-url https://splunk.example:8088 -hec-token-file /etc/hexward/hec.token
+
+# Syslog as HFS JSON or CEF, RFC 5424 by default, over udp, tcp or tls
+auditlight -syslog wazuh.example:514 -syslog-network tcp
+auditlight -syslog siem.example:6514 -syslog-format cef -syslog-network tls -syslog-ca-file ca.pem
+
+# Any URL, with the same events, authenticated with a shared secret
+auditlight -export-webhook https://hooks.example/hexward -export-webhook-secret-file secret.txt
+```
+
+Ready-made content: [hexward-wazuh](https://github.com/nizartuanku/hexward-wazuh)
+(decoder and rules, tested on Wazuh 4.14.9) and
+[TA-hexward](https://github.com/nizartuanku/TA-hexward) (Splunk add-on).
+
+| Flag | Default | Meaning |
+|---|---|---|
+| `-export-file` | off | Append HFS NDJSON to this file (rotated at 50 MiB, 5 kept) |
+| `-hec-url`, `-hec-token-file`, `-hec-index`, `-hec-ca-file` | off | Splunk HEC; sourcetype `hexward:finding`, source `hexward:auditlight` |
+| `-syslog` | off | Collector `host:port` |
+| `-syslog-format` | `json` | `json` (HFS) or `cef` |
+| `-syslog-network` | `udp` | `udp`, `tcp` or `tls` (certificates are always verified) |
+| `-syslog-rfc` | `5424` | `5424` or `3164` |
+| `-export-webhook`, `-export-webhook-secret-file` | off | Webhook payload v2; secret sent as `X-Hexward-Token` |
+| `-export-evidence` | `redacted` | `redacted` drops secret-like evidence keys; `none` sends no evidence |
+
+The finding ID is the fingerprint, so the same condition on the same target
+keeps the same identity across runs and the SIEM can close what it opened.
+Evidence carries CVE, CVSS, confidence, source tools, mapped controls and the
+observed values. For secret findings the matched value is never exported —
+only the file and line where it was found. An export failure is logged and
+never affects the assessment, its report or its notifications.
 
 ## HTTP API
 

@@ -3,6 +3,7 @@ package orchestrator
 import (
 	"context"
 	"fmt"
+	"log"
 	"strings"
 	"time"
 
@@ -165,14 +166,21 @@ func (r *Runner) DeltaFor(job *store.Job) (delta.Result, *store.Job, error) {
 	return delta.Compare(prev, current, baseline.ID, job.ID, baseline.Finished, job.Finished), baseline, nil
 }
 
-// afterRun computes the delta, records the baseline on the job, and notifies.
-// It is called once a run reaches a terminal state.
+// afterRun computes the delta, exports it to the SIEM, records the baseline
+// on the job, and notifies. It is called once a run reaches a terminal state.
 func (r *Runner) afterRun(job *store.Job) {
-	if job.DefinitionID == "" || job.State != store.StateCompleted {
+	if job.State != store.StateCompleted {
+		return
+	}
+	if job.DefinitionID == "" && r.exporter == nil {
 		return
 	}
 	res, baseline, err := r.DeltaFor(job)
 	if err != nil {
+		return
+	}
+	r.export(job, res)
+	if job.DefinitionID == "" {
 		return
 	}
 	if baseline != nil {
@@ -221,6 +229,24 @@ func (r *Runner) afterRun(job *store.Job) {
 		// operator believes they are covered. Record it on the definition.
 		d.LastSkipReason = "notification failed: " + strings.Join(problems, "; ")
 		_ = r.store.UpdateDefinition(d)
+	}
+}
+
+// export sends the run's transitions to the SIEM. A one-off run has no
+// baseline, so all of its findings go out as opened. A failure is logged and
+// never affects the assessment or its notifications.
+func (r *Runner) export(job *store.Job, res delta.Result) {
+	if r.exporter == nil {
+		return
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+	at := job.Finished
+	if at.IsZero() {
+		at = time.Now()
+	}
+	if err := r.exporter.Run(ctx, res, at.UTC()); err != nil {
+		log.Printf("auditlight: SIEM export for job %s: %v", job.ID, err)
 	}
 }
 

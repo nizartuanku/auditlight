@@ -34,7 +34,7 @@ One honest wrinkle is written into the product: "no longer detected" is not the 
 Every assessment starts with a recorded authorisation — who gave permission to test what. That statement is printed in the report as evidence of due diligence.
 For scheduled, recurring assessments, that permission expires after 90 days. When it lapses, the schedule stops and says so, and a human has to renew it. This is deliberate: a permission that never expires is not a permission, it is a checkbox someone clicked once.
 ## Why it runs with nothing else installed
-AuditLight is one binary built entirely on Go's standard library. It links no third-party code, needs no database, no container, no agent, and no internet — it runs on an air-gapped host, and the reports it writes are self-contained files that open anywhere.
+AuditLight is one binary built entirely on Go's standard library. It links no third-party code (its one dependency, the SIEM export module hexward-core, is Hexward's own and is itself standard library only), needs no database, no container, no agent, and no internet — it runs on an air-gapped host, and the reports it writes are self-contained files that open anywhere.
 If you have nuclei, testssl.sh, lynis or nmap installed, AuditLight will use them in their safe modes and credit the extra coverage in the report. If you do not, everything still works. nmap is never bundled — its licence forbids it — so it stays strictly bring-your-own.
 ## What it will not tell you
 - Whether a weakness is actually exploitable — findings are marked confirmed, likely or potential, and likely usually rests on a version string, which distributions patch without changing
@@ -44,11 +44,11 @@ Every finding carries its evidence, so you can check the claim rather than trust
 ## Try it
 The free Apache-2.0 edition on GitHub runs all nine checks on up to three targets, showing 50 findings, with the full Process Report and a watermarked preview of the Assessment Report.
 ```
-curl -LO https://github.com/nizartuanku/auditlight/releases/latest/download/auditlight-free-0.3.2-linux-amd64.tar.gz
+curl -LO https://github.com/nizartuanku/auditlight/releases/latest/download/auditlight-free-0.3.3-linux-amd64.tar.gz
 curl -LO https://github.com/nizartuanku/auditlight/releases/latest/download/SHA256SUMS
 sha256sum -c SHA256SUMS
-tar xzf auditlight-free-0.3.2-linux-amd64.tar.gz
-cd auditlight-0.3.2
+tar xzf auditlight-free-0.3.3-linux-amd64.tar.gz
+cd auditlight-0.3.3
 ./auditlight
 ```
 Run the perimeter profile against a domain you own, and read the Process Report first. Pro and Team — the full Assessment Report and change tracking over time — are on Whop.

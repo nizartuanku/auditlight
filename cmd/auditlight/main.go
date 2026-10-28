@@ -14,11 +14,14 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/nizartuanku/hexward-core/hfs"
+
 	"github.com/nizartuanku/auditlight/internal/license"
 	"github.com/nizartuanku/auditlight/internal/notify"
 	"github.com/nizartuanku/auditlight/internal/orchestrator"
 	"github.com/nizartuanku/auditlight/internal/report"
 	"github.com/nizartuanku/auditlight/internal/schedule"
+	"github.com/nizartuanku/auditlight/internal/siemexport"
 	"github.com/nizartuanku/auditlight/internal/store"
 	"github.com/nizartuanku/auditlight/internal/version"
 	"github.com/nizartuanku/auditlight/internal/webui"
@@ -48,6 +51,7 @@ func main() {
 		aiLang       = flag.String("ai-assist-lang", os.Getenv("AUDITLIGHT_AI_ASSIST_LANG"), "language of AI explanations: en (default) or id")
 		aiNoThinking = flag.Bool("ai-assist-no-thinking", os.Getenv("AUDITLIGHT_AI_ASSIST_NO_THINKING") == "1", "disable reasoning mode (Qwen3 enterprise profiles)")
 	)
+	exportFlags := siemexport.Register(flag.CommandLine)
 	flag.Parse()
 
 	if *showVersion {
@@ -73,7 +77,12 @@ func main() {
 		Host: *smtpHost, Port: *smtpPort, Username: *smtpUser,
 		Password: *smtpPass, From: *smtpFrom, StartTLS: *smtpTLS,
 	})
-	runner := orchestrator.New(st, lic).WithNotifications(sender, *consoleURL)
+	host, _ := os.Hostname()
+	exporter, err := exportFlags.Build(hfs.Meta{Product: "auditlight", Version: version.Version, Host: host})
+	if err != nil {
+		log.Fatalf("auditlight: %v", err)
+	}
+	runner := orchestrator.New(st, lic).WithNotifications(sender, *consoleURL).WithExport(exporter)
 	srv := webui.New(runner, st, report.Branding{
 		Firm: *firm, Contact: *contact, WhiteLabel: *whiteLabel,
 	})
@@ -94,6 +103,9 @@ func main() {
 	}
 
 	banner(lic, *addr, *dataDir, *inMemory, scheduling, runner, aiAssist)
+	if names := exporter.Names(); len(names) > 0 {
+		fmt.Printf("  siem      %s (Hexward Finding Schema v1)\n\n", strings.Join(names, ", "))
+	}
 
 	if err := webui.Listen(ctx, *addr, srv.Handler()); err != nil && err != http.ErrServerClosed {
 		log.Fatalf("auditlight: %v", err)

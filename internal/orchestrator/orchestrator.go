@@ -22,6 +22,7 @@ import (
 	"github.com/nizartuanku/auditlight/internal/license"
 	"github.com/nizartuanku/auditlight/internal/notify"
 	"github.com/nizartuanku/auditlight/internal/score"
+	"github.com/nizartuanku/auditlight/internal/siemexport"
 	"github.com/nizartuanku/auditlight/internal/store"
 )
 
@@ -102,6 +103,7 @@ type Runner struct {
 
 	notifier   *notify.Sender
 	consoleURL string
+	exporter   *siemexport.Exporter
 
 	mu      sync.Mutex
 	running map[string]context.CancelFunc
@@ -123,6 +125,14 @@ func New(st store.Store, lic license.State) *Runner {
 func (r *Runner) WithNotifications(s *notify.Sender, consoleURL string) *Runner {
 	r.notifier = s
 	r.consoleURL = consoleURL
+	return r
+}
+
+// WithExport attaches a SIEM exporter. Every completed run, scheduled or
+// one-off, is then sent as Hexward Finding Schema events. A nil exporter
+// turns export off.
+func (r *Runner) WithExport(x *siemexport.Exporter) *Runner {
+	r.exporter = x
 	return r
 }
 

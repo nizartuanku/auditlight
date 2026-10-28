@@ -7,7 +7,7 @@ to provision, and no database to create.
 
 - Linux, amd64.
 - Nothing else. The binary links no third-party library and makes no outbound connection of
-  its own.
+  its own, other than to the SIEM, if you turn SIEM export on.
 
 Tested on Ubuntu 24.04 LTS, Ubuntu 22.04 LTS and Debian 12. The RHEL family (Rocky, Alma,
 RHEL 9) and Alpine are best-effort: the binary runs, but the optional external tools have
@@ -17,8 +17,8 @@ different package names.
 
 ```sh
 sha256sum -c SHA256SUMS
-tar xzf auditlight-free-0.3.2-linux-amd64.tar.gz
-cd auditlight-0.3.2
+tar xzf auditlight-free-0.3.3-linux-amd64.tar.gz
+cd auditlight-0.3.3
 ./auditlight
 ```
 

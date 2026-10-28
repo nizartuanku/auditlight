@@ -1,6 +1,17 @@
 # Changelog
 
-## Unreleased
+## 0.3.3 — 2026-10-28
+
+- **SIEM export, in every edition (Free included).** Completed assessments are sent as
+  [Hexward Finding Schema](https://github.com/nizartuanku/hexward-core) v1 events to an NDJSON
+  file (`-export-file`), Splunk HEC (`-hec-url`, `-hec-token-file`), syslog as HFS JSON or CEF
+  over udp, tcp or verified tls (`-syslog`, `-syslog-format`, `-syslog-network`,
+  `-syslog-rfc`, `-syslog-ca-file`) and/or a webhook (`-export-webhook`,
+  `-export-webhook-secret-file`). Events follow the Change Report: new and regressed findings
+  are `opened`, resolved ones `resolved`, unchanged ones are not repeated; a first or one-off
+  run opens everything. `-export-evidence redacted|none`. Secret-finding values never leave.
+  Works with [hexward-wazuh](https://github.com/nizartuanku/hexward-wazuh) and
+  [TA-hexward](https://github.com/nizartuanku/TA-hexward).
 
 - Docs: `docs/samples/` added — a real `perimeter` assessment against public test hosts (free edition), findings and surface map exported as the API returned them.
 - Docs: English is the supported AI Assist language in this release. Bahasa Indonesia
